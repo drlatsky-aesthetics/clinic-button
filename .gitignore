@@ -1,4 +1,5 @@
 node_modules/
+handoff/
 .env
 alerts.db
 *.db-journal
