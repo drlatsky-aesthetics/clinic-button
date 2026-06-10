@@ -101,11 +101,11 @@ const httpServer = http.createServer(async (req, res) => {
       const patients = Array.isArray(data) ? data : (data.patients || data.content || []);
       const patient = patients[0];
       if (!patient) {
-        res.writeHead(404, { "Content-Type": "application/json" });
+        res.writeHead(404, { "Content-Type": "application/json", "Cache-Control": "no-store" });
         res.end(JSON.stringify({ error: "NOT_FOUND", message: "No patient found for that HCN." }));
         return;
       }
-      res.writeHead(200, { "Content-Type": "application/json" });
+      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store" });
       res.end(JSON.stringify({
         demographicNo: patient.demographicNo || patient.id,
         firstName: patient.firstName,
@@ -115,15 +115,15 @@ const httpServer = http.createServer(async (req, res) => {
       }));
     } catch (e) {
       if (e.message === "OSCAR not configured") {
-        res.writeHead(503, { "Content-Type": "application/json" });
+        res.writeHead(503, { "Content-Type": "application/json", "Cache-Control": "no-store" });
         res.end(JSON.stringify({
           error: "OSCAR_NOT_CONFIGURED",
           message: "Set OSCAR_BASE_URL, OSCAR_CLIENT_ID, OSCAR_CLIENT_SECRET in .env to enable patient lookup.",
         }));
       } else {
-        console.error("[OSCAR] patient-lookup error:", e.message);
-        res.writeHead(500, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: "SERVER_ERROR", message: e.message }));
+        console.error("[OSCAR] patient-lookup error:", e.message); // never logs HCN or patient data
+        res.writeHead(500, { "Content-Type": "application/json", "Cache-Control": "no-store" });
+        res.end(JSON.stringify({ error: "SERVER_ERROR", message: "Lookup failed." }));
       }
     }
     return;
@@ -145,21 +145,21 @@ const httpServer = http.createServer(async (req, res) => {
           }),
         });
         if (apiRes.ok) saved++;
-        else console.error("[OSCAR] vitals save failed for type", m.type, "status", apiRes.status);
+        else console.error("[OSCAR] vitals save failed for type", m.type, "status", apiRes.status); // no PHI in log
       }
-      res.writeHead(200, { "Content-Type": "application/json" });
+      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store" });
       res.end(JSON.stringify({ saved }));
     } catch (e) {
       if (e.message === "OSCAR not configured") {
-        res.writeHead(503, { "Content-Type": "application/json" });
+        res.writeHead(503, { "Content-Type": "application/json", "Cache-Control": "no-store" });
         res.end(JSON.stringify({
           error: "OSCAR_NOT_CONFIGURED",
           message: "Set OSCAR_BASE_URL, OSCAR_CLIENT_ID, OSCAR_CLIENT_SECRET in .env to enable vitals saving.",
         }));
       } else {
-        console.error("[OSCAR] vitals error:", e.message);
-        res.writeHead(500, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ error: "SERVER_ERROR", message: e.message }));
+        console.error("[OSCAR] vitals error:", e.message); // never logs patient data or measurements
+        res.writeHead(500, { "Content-Type": "application/json", "Cache-Control": "no-store" });
+        res.end(JSON.stringify({ error: "SERVER_ERROR", message: "Save failed." }));
       }
     }
     return;
