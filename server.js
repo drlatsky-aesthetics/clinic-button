@@ -18,11 +18,6 @@ const { WebSocketServer } = require("ws");
 const PORT = 3000;
 const FLIC_HUB_HOST = process.env.FLIC_HUB_HOST || "192.168.1.100"; // Set your Flic Hub IP
 
-// ─── OSCAR CONFIG ─────────────────────────────────────────────────────────────
-const OSCAR_BASE_URL      = process.env.OSCAR_BASE_URL      || "";  // e.g. https://yourclinic.well-ai.com/oscar
-const OSCAR_CLIENT_ID     = process.env.OSCAR_CLIENT_ID     || "";
-const OSCAR_CLIENT_SECRET = process.env.OSCAR_CLIENT_SECRET || "";
-const OSCAR_PROVIDER_NO   = process.env.OSCAR_PROVIDER_NO   || "1"; // physician provider number
 const FLIC_HUB_PORT = 8124; // Default Flic Hub SDK port
 const DEMO_MODE = process.env.DEMO_MODE === "true" || !process.env.FLIC_HUB_HOST;
 
@@ -36,53 +31,6 @@ const BUTTON_MAP = {
   demo: { room: "Demo Room", label: "Demo Button" },
 };
 
-// ─── OSCAR API CLIENT ─────────────────────────────────────────────────────────
-
-let oscarToken = { token: null, expiresAt: 0 };
-
-async function getOscarToken() {
-  if (oscarToken.token && Date.now() < oscarToken.expiresAt - 60000) {
-    return oscarToken.token;
-  }
-  const res = await fetch(`${OSCAR_BASE_URL}/oauth/token`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "client_credentials",
-      client_id: OSCAR_CLIENT_ID,
-      client_secret: OSCAR_CLIENT_SECRET,
-    }),
-  });
-  if (!res.ok) throw new Error(`OSCAR token error: ${res.status}`);
-  const data = await res.json();
-  oscarToken = {
-    token: data.access_token,
-    expiresAt: Date.now() + (data.expires_in || 3600) * 1000,
-  };
-  return oscarToken.token;
-}
-
-async function oscarFetch(path, options = {}) {
-  if (!OSCAR_BASE_URL) throw new Error("OSCAR not configured");
-  const token = await getOscarToken();
-  return fetch(`${OSCAR_BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-  });
-}
-
-function readBody(req) {
-  return new Promise((resolve, reject) => {
-    let body = "";
-    req.on("data", chunk => { body += chunk; });
-    req.on("end", () => { try { resolve(JSON.parse(body)); } catch { reject(new Error("Bad JSON")); } });
-  });
-}
-
 // ─── STATE ───────────────────────────────────────────────────────────────────
 
 const alerts = {}; // { roomId: { room, label, time, acknowledged } }
@@ -90,81 +38,7 @@ const clients = new Set(); // Connected WebSocket dashboard clients
 
 // ─── HTTP SERVER (serves dashboard) ──────────────────────────────────────────
 
-const httpServer = http.createServer(async (req, res) => {
-  // ── API ROUTES ──────────────────────────────────────────────────────────────
-
-  if (req.method === "POST" && req.url === "/api/patient-lookup") {
-    try {
-      const { hcn } = await readBody(req);
-      const apiRes = await oscarFetch(`/oscar/api/v1/patients/search?query=${encodeURIComponent(hcn)}`);
-      const data = await apiRes.json();
-      const patients = Array.isArray(data) ? data : (data.patients || data.content || []);
-      const patient = patients[0];
-      if (!patient) {
-        res.writeHead(404, { "Content-Type": "application/json", "Cache-Control": "no-store" });
-        res.end(JSON.stringify({ error: "NOT_FOUND", message: "No patient found for that HCN." }));
-        return;
-      }
-      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store" });
-      res.end(JSON.stringify({
-        demographicNo: patient.demographicNo || patient.id,
-        firstName: patient.firstName,
-        lastName: patient.lastName,
-        dateOfBirth: patient.dateOfBirth || patient.dob,
-        hcn,
-      }));
-    } catch (e) {
-      if (e.message === "OSCAR not configured") {
-        res.writeHead(503, { "Content-Type": "application/json", "Cache-Control": "no-store" });
-        res.end(JSON.stringify({
-          error: "OSCAR_NOT_CONFIGURED",
-          message: "Set OSCAR_BASE_URL, OSCAR_CLIENT_ID, OSCAR_CLIENT_SECRET in .env to enable patient lookup.",
-        }));
-      } else {
-        console.error("[OSCAR] patient-lookup error:", e.message); // never logs HCN or patient data
-        res.writeHead(500, { "Content-Type": "application/json", "Cache-Control": "no-store" });
-        res.end(JSON.stringify({ error: "SERVER_ERROR", message: "Lookup failed." }));
-      }
-    }
-    return;
-  }
-
-  if (req.method === "POST" && req.url === "/api/vitals") {
-    try {
-      const { demographicNo, measurements } = await readBody(req);
-      const measuredDate = new Date().toISOString();
-      let saved = 0;
-      for (const m of measurements) {
-        const apiRes = await oscarFetch(`/oscar/api/v1/patients/${demographicNo}/measurements`, {
-          method: "POST",
-          body: JSON.stringify({
-            type: m.type,
-            value: m.value,
-            measuredDate,
-            providerNo: OSCAR_PROVIDER_NO,
-          }),
-        });
-        if (apiRes.ok) saved++;
-        else console.error("[OSCAR] vitals save failed for type", m.type, "status", apiRes.status); // no PHI in log
-      }
-      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store" });
-      res.end(JSON.stringify({ saved }));
-    } catch (e) {
-      if (e.message === "OSCAR not configured") {
-        res.writeHead(503, { "Content-Type": "application/json", "Cache-Control": "no-store" });
-        res.end(JSON.stringify({
-          error: "OSCAR_NOT_CONFIGURED",
-          message: "Set OSCAR_BASE_URL, OSCAR_CLIENT_ID, OSCAR_CLIENT_SECRET in .env to enable vitals saving.",
-        }));
-      } else {
-        console.error("[OSCAR] vitals error:", e.message); // never logs patient data or measurements
-        res.writeHead(500, { "Content-Type": "application/json", "Cache-Control": "no-store" });
-        res.end(JSON.stringify({ error: "SERVER_ERROR", message: "Save failed." }));
-      }
-    }
-    return;
-  }
-
+const httpServer = http.createServer((req, res) => {
   // ── FILE SERVING ────────────────────────────────────────────────────────────
 
   const filePath =

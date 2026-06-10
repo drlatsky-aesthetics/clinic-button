@@ -45,24 +45,6 @@ echo  (Find the IP in your router's device list or the Flic app.)
 echo.
 set /p FLIC_IP="  Flic Hub IP (or press Enter for demo): "
 
-:: ── OSCAR EMR Configuration ───────────────────────────────────────────────────
-
-echo.
-echo  ── OSCAR Pro EMR Integration (optional) ───────────────────
-echo.
-echo  Leave blank to skip OSCAR integration.
-echo  If configured, enables patient lookup by health card and
-echo  saving vitals directly to OSCAR measurements.
-echo.
-set /p OSCAR_BASE_URL="  OSCAR Base URL (or press Enter to skip): "
-
-if not "%OSCAR_BASE_URL%"=="" (
-    set /p OSCAR_CLIENT_ID="  OSCAR Client ID: "
-    set /p OSCAR_CLIENT_SECRET="  OSCAR Client Secret: "
-    set /p OSCAR_PROVIDER_NO="  Provider Number (default 1): "
-    if "!OSCAR_PROVIDER_NO!"=="" set OSCAR_PROVIDER_NO=1
-)
-
 :: ── Write .env ───────────────────────────────────────────────────────────────
 
 if "%FLIC_IP%"=="" (
@@ -71,16 +53,6 @@ if "%FLIC_IP%"=="" (
 ) else (
     echo FLIC_HUB_HOST=%FLIC_IP%> .env
     set MODE_LABEL=Flic Hub at %FLIC_IP%
-)
-
-if not "%OSCAR_BASE_URL%"=="" (
-    echo OSCAR_BASE_URL=%OSCAR_BASE_URL%>> .env
-    echo OSCAR_CLIENT_ID=%OSCAR_CLIENT_ID%>> .env
-    echo OSCAR_CLIENT_SECRET=%OSCAR_CLIENT_SECRET%>> .env
-    echo OSCAR_PROVIDER_NO=%OSCAR_PROVIDER_NO%>> .env
-    echo  [OK] OSCAR config saved to .env
-) else (
-    echo  [--] OSCAR integration skipped
 )
 
 echo  [OK] Config saved to .env

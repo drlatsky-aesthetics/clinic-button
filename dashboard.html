@@ -90,7 +90,7 @@
       margin-right: 6px;
       transition: background 0.3s;
     }
-    .status-dot.connected { background: var(--alert-green); box-shadow: 0 0 8px var(--alert-green); }
+    .status-dot.connected    { background: var(--alert-green); box-shadow: 0 0 8px var(--alert-green); }
     .status-dot.disconnected { background: var(--alert-red); }
 
     .status-label {
@@ -291,13 +291,8 @@
       user-select: none;
     }
 
-    .room-tile:hover {
-      border-color: var(--gold-dim);
-    }
-
-    .room-tile:active {
-      background: var(--charcoal-light);
-    }
+    .room-tile:hover  { border-color: var(--gold-dim); }
+    .room-tile:active { background: var(--charcoal-light); }
 
     .room-tile-name {
       font-family: 'Cormorant Garamond', serif;
@@ -361,167 +356,6 @@
       opacity: 1;
       transform: translateY(0);
     }
-
-    /* ── VITALS BUTTON ── */
-    .vitals-btn {
-      background: transparent;
-      border: 1px solid var(--gold);
-      color: var(--gold);
-      font-family: 'Jost', sans-serif;
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 10px 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-      flex-shrink: 0;
-    }
-    .vitals-btn:hover { background: var(--gold); color: var(--charcoal); }
-
-    .btn-primary {
-      background: var(--gold);
-      border: 1px solid var(--gold);
-      color: var(--charcoal);
-      font-family: 'Jost', sans-serif;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 10px 22px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-primary:hover { background: var(--gold-light); }
-    .btn-primary:disabled { opacity: 0.4; cursor: default; }
-
-    .btn-ghost {
-      background: transparent;
-      border: 1px solid var(--charcoal-light);
-      color: var(--text-dim);
-      font-family: 'Jost', sans-serif;
-      font-size: 12px;
-      font-weight: 400;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 10px 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-ghost:hover { border-color: var(--text-dim); color: var(--text-primary); }
-
-    /* ── VITALS MODAL ── */
-    #vitals-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .vitals-panel {
-      background: var(--charcoal-mid);
-      border: 1px solid var(--charcoal-light);
-      border-radius: var(--radius-lg);
-      padding: 32px;
-      width: min(580px, 95vw);
-      max-height: 90vh;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .vitals-section-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--gold);
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    .camera-area {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 4/3;
-      background: #000;
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-
-    .camera-area video,
-    .camera-area canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .patient-found {
-      background: var(--charcoal);
-      border: 1px solid var(--gold-dim);
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .vitals-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .vital-field label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-dim);
-      display: block;
-      margin-bottom: 4px;
-    }
-
-    .vital-field input {
-      width: 100%;
-      background: var(--charcoal);
-      border: 1px solid var(--charcoal-light);
-      color: var(--text-primary);
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-family: Jost, sans-serif;
-      font-size: 14px;
-    }
-
-    .vital-field input:focus {
-      outline: 1px solid var(--gold);
-      border-color: var(--gold);
-    }
-
-    .bp-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 12px;
-      justify-content: flex-end;
-      padding-top: 8px;
-      border-top: 1px solid var(--charcoal-light);
-    }
-
-    .oscar-status {
-      font-size: 13px;
-    }
   </style>
 </head>
 <body>
@@ -564,7 +398,7 @@
 
     <hr />
 
-    <!-- Room Quick-Test (dev / in-clinic demo) -->
+    <!-- Room Quick-Test -->
     <div>
       <div class="section-header" style="margin-bottom: 16px;">
         <span class="section-title">Room Buttons</span>
@@ -581,110 +415,23 @@
     <span class="footer-text" id="last-event">No events yet</span>
   </footer>
 
-  <div id="vitals-modal" style="display:none;">
-    <div class="vitals-panel">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-family:'Cormorant Garamond',serif; font-size:22px; color:var(--gold-light);">Patient Vitals</span>
-        <button class="btn-ghost" onclick="closeVitals()" style="padding:6px 14px;">✕</button>
-      </div>
-
-      <!-- Health card scan -->
-      <div>
-        <div class="vitals-section-title" style="margin-bottom:12px;">Health Card</div>
-        <div class="camera-area" id="camera-area" style="display:none;">
-          <video id="camera-video" autoplay playsinline muted></video>
-          <canvas id="camera-canvas" style="display:none;"></canvas>
-        </div>
-        <div id="camera-capture-img" style="display:none; position:relative;">
-          <img id="captured-img" style="width:100%; border-radius:var(--radius);" />
-          <button class="btn-ghost" onclick="retakeScan()" style="position:absolute;top:8px;right:8px;padding:4px 12px;font-size:11px;">Retake</button>
-        </div>
-        <div style="display:flex; gap:10px; margin-top:10px; align-items:flex-end;">
-          <div class="vital-field" style="flex:1;">
-            <label>HCN (Ontario Health Card Number)</label>
-            <input type="text" id="hcn-input" placeholder="10-digit number" maxlength="12" inputmode="numeric" />
-          </div>
-          <button class="btn-ghost" id="scan-btn" onclick="startScan()" style="padding:10px 16px; white-space:nowrap;">📷 Scan Card</button>
-          <button class="btn-primary" onclick="lookupPatient()" style="padding:10px 18px; white-space:nowrap;">Look Up</button>
-        </div>
-      </div>
-
-      <!-- Patient result -->
-      <div id="patient-result" style="display:none;">
-        <div class="patient-found">
-          <div>
-            <div style="font-family:'Cormorant Garamond',serif; font-size:18px;" id="patient-name">—</div>
-            <div style="font-size:12px; color:var(--text-dim); margin-top:2px;" id="patient-dob">—</div>
-          </div>
-          <div style="font-size:11px; color:var(--alert-green); letter-spacing:0.08em; text-transform:uppercase;">✓ Found in OSCAR</div>
-        </div>
-      </div>
-
-      <!-- Vitals form -->
-      <div id="vitals-form" style="display:none;">
-        <div class="vitals-section-title" style="margin-bottom:14px;">Measurements</div>
-        <div class="vitals-grid">
-          <div class="vital-field" style="grid-column:1/-1;">
-            <label>Blood Pressure (mmHg)</label>
-            <div class="bp-row">
-              <input type="number" id="v-bp-sys" placeholder="Systolic" min="40" max="300" style="flex:1;" />
-              <span style="color:var(--text-dim);">/</span>
-              <input type="number" id="v-bp-dia" placeholder="Diastolic" min="20" max="200" style="flex:1;" />
-            </div>
-          </div>
-          <div class="vital-field">
-            <label>Heart Rate (bpm)</label>
-            <input type="number" id="v-hr" placeholder="e.g. 72" min="20" max="300" />
-          </div>
-          <div class="vital-field">
-            <label>O₂ Saturation (%)</label>
-            <input type="number" id="v-o2" placeholder="e.g. 98" min="50" max="100" />
-          </div>
-          <div class="vital-field">
-            <label>Height (cm)</label>
-            <input type="number" id="v-ht" placeholder="e.g. 170" min="50" max="250" />
-          </div>
-          <div class="vital-field">
-            <label>Weight (kg)</label>
-            <input type="number" id="v-wt" placeholder="e.g. 70.5" min="1" max="500" step="0.1" />
-          </div>
-          <div class="vital-field">
-            <label>Temperature (°C)</label>
-            <input type="number" id="v-temp" placeholder="e.g. 37.0" min="30" max="45" step="0.1" />
-          </div>
-        </div>
-      </div>
-
-      <div id="oscar-status" class="oscar-status" style="display:none;"></div>
-
-      <div class="modal-actions">
-        <button class="btn-ghost" onclick="closeVitals()">Cancel</button>
-        <button class="btn-primary" id="save-vitals-btn" onclick="saveVitals()" style="display:none;">Save to OSCAR</button>
-      </div>
-    </div>
-  </div>
-
   <div id="toast"></div>
-
-  <!-- ── AUDIO (optional alert chime) ── -->
-  <audio id="chime" preload="auto">
-    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFhoeGhoOCf3tyaVxQRTxAN0EvKSsnKCouNT5JVWBrb3B0eXt7e3t7e3t4dG9pY11VTkdAOTIsJyMiIiQoLjY/SlZhbHJ2en19fn5+fn5+fn59fXx7eXd1c3FwbnZi" type="audio/wav" />
-  </audio>
 
 <script>
   // ── CONFIG ──────────────────────────────────────────────────────────────────
   const WS_URL = `ws://${location.host}`;
+  const BASE_TITLE = "Clinic Dashboard — Patient Ready";
 
   const ROOMS = [
-    { id: "room_1",             label: "Room 1" },
-    { id: "room_2",             label: "Room 2" },
-    { id: "room_3",             label: "Room 3" },
-    { id: "aesthetics_suite",   label: "Aesthetics Suite" },
+    { id: "room_1",           label: "Room 1" },
+    { id: "room_2",           label: "Room 2" },
+    { id: "room_3",           label: "Room 3" },
+    { id: "aesthetics_suite", label: "Aesthetics Suite" },
   ];
 
   // ── STATE ───────────────────────────────────────────────────────────────────
   let ws;
-  let alerts = {}; // roomId → alert object
+  let alerts = {};
 
   // ── CLOCK ───────────────────────────────────────────────────────────────────
   function updateClock() {
@@ -694,6 +441,28 @@
   }
   updateClock();
   setInterval(updateClock, 1000);
+
+  // ── TAB NUDGE ────────────────────────────────────────────────────────────────
+  let tabFlashInterval = null;
+
+  function updateTabTitle() {
+    const active = Object.values(alerts).filter(a => !a.acknowledged);
+    if (active.length === 0) {
+      clearInterval(tabFlashInterval);
+      tabFlashInterval = null;
+      document.title = BASE_TITLE;
+      return;
+    }
+    if (tabFlashInterval) return; // already flashing
+    const roomName = active[0].room;
+    let flash = true;
+    tabFlashInterval = setInterval(() => {
+      document.title = flash
+        ? `🔔 (${active.length}) ${roomName} — Patient Ready`
+        : BASE_TITLE;
+      flash = !flash;
+    }, 1000);
+  }
 
   // ── WEBSOCKET ────────────────────────────────────────────────────────────────
   function connect() {
@@ -712,10 +481,7 @@
     ws.onerror = () => setStatus(false);
 
     ws.onmessage = ({ data }) => {
-      try {
-        const msg = JSON.parse(data);
-        handleMessage(msg);
-      } catch (e) {}
+      try { handleMessage(JSON.parse(data)); } catch (e) {}
     };
   }
 
@@ -725,9 +491,7 @@
   }
 
   function send(obj) {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify(obj));
-    }
+    if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(obj));
   }
 
   // ── MESSAGE HANDLER ──────────────────────────────────────────────────────────
@@ -735,53 +499,41 @@
     if (msg.type === "state") {
       alerts = msg.alerts || {};
       renderAll();
+      updateTabTitle();
     } else if (msg.type === "alert") {
       alerts[msg.alert.roomId] = msg.alert;
       renderAll();
       playChime();
+      updateTabTitle();
       toast(`🔔 ${msg.alert.room} — Patient ready`);
       updateLastEvent(msg.alert.room);
     } else if (msg.type === "acknowledged") {
       if (alerts[msg.roomId]) alerts[msg.roomId].acknowledged = true;
       renderAll();
+      updateTabTitle();
     } else if (msg.type === "cleared") {
       delete alerts[msg.roomId];
       renderAll();
+      updateTabTitle();
     }
   }
 
   // ── RENDER ───────────────────────────────────────────────────────────────────
   function renderAll() {
-    const container = document.getElementById("alerts-container");
+    const container  = document.getElementById("alerts-container");
     const emptyState = document.getElementById("empty-state");
-    const badge = document.getElementById("alert-badge");
+    const badge      = document.getElementById("alert-badge");
 
     const activeAlerts = Object.values(alerts).filter(a => !a.acknowledged);
-    const allAlerts = Object.values(alerts);
+    const allAlerts    = Object.values(alerts);
 
-    // Badge
-    if (activeAlerts.length > 0) {
-      badge.textContent = activeAlerts.length;
-      badge.classList.add("visible");
-    } else {
-      badge.classList.remove("visible");
-    }
+    badge.textContent = activeAlerts.length;
+    badge.classList.toggle("visible", activeAlerts.length > 0);
+    emptyState.classList.toggle("visible", allAlerts.length === 0);
 
-    // Empty state
-    if (allAlerts.length === 0) {
-      emptyState.classList.add("visible");
-    } else {
-      emptyState.classList.remove("visible");
-    }
-
-    // Clear and rebuild cards
     container.innerHTML = "";
-    allAlerts.forEach(alert => {
-      const card = buildAlertCard(alert);
-      container.appendChild(card);
-    });
+    allAlerts.forEach(alert => container.appendChild(buildAlertCard(alert)));
 
-    // Update room tiles
     renderRooms();
   }
 
@@ -790,7 +542,7 @@
     card.className = "alert-card" + (alert.acknowledged ? " acknowledged" : "");
     card.dataset.roomId = alert.roomId;
 
-    const elapsed = formatElapsed(alert.time);
+    const elapsed    = formatElapsed(alert.time);
     const clickLabel = { single: "Single press", double: "Double press", hold: "Hold" }[alert.clickType] || alert.clickType;
 
     card.innerHTML = `
@@ -802,9 +554,6 @@
           <span class="click-badge">${clickLabel}</span>
         </div>
       </div>
-      <button class="vitals-btn" onclick="openVitals('${alert.roomId}')" style="margin-right:8px;">
-        Vitals
-      </button>
       <button class="ack-btn" onclick="acknowledge('${alert.roomId}')" ${alert.acknowledged ? "disabled" : ""}>
         ${alert.acknowledged ? "✓ Done" : "Acknowledge"}
       </button>
@@ -821,7 +570,6 @@
       const hasAlert = alerts[room.id] && !alerts[room.id]?.acknowledged;
       const tile = document.createElement("div");
       tile.className = "room-tile";
-      tile.style.borderLeftColor = hasAlert ? "var(--alert-red)" : "var(--charcoal-light)";
       if (hasAlert) tile.style.borderLeft = "3px solid var(--alert-red)";
 
       tile.innerHTML = `
@@ -832,7 +580,6 @@
 
       tile.onclick = () => {
         send({ type: "test_press", buttonId: "demo", roomOverride: room.id });
-        // Also trigger locally for demo
         handleMessage({
           type: "alert",
           alert: {
@@ -853,16 +600,54 @@
   // ── ACKNOWLEDGE ──────────────────────────────────────────────────────────────
   function acknowledge(roomId) {
     send({ type: "acknowledge", roomId });
-    // Optimistic local update
     if (alerts[roomId]) {
+      const roomName = alerts[roomId].room;
       alerts[roomId].acknowledged = true;
       renderAll();
-      toast(`✓ ${alerts[roomId]?.room || roomId} acknowledged`);
+      updateTabTitle();
+      toast(`✓ ${roomName} acknowledged`);
       setTimeout(() => {
         delete alerts[roomId];
         renderAll();
+        updateTabTitle();
       }, 2000);
     }
+  }
+
+  // ── CHIME ─────────────────────────────────────────────────────────────────────
+  // Three-note ascending bell: unlocks after first user interaction (browser policy)
+  let audioCtx = null;
+  document.addEventListener("click", () => {
+    if (!audioCtx) audioCtx = new AudioContext();
+  }, { once: true });
+
+  function playChime() {
+    if (!audioCtx) return;
+    if (audioCtx.state === "suspended") audioCtx.resume();
+
+    const notes = [
+      { freq: 784,  start: 0.00, duration: 0.6 },  // G5
+      { freq: 1047, start: 0.15, duration: 0.6 },  // C6
+      { freq: 1319, start: 0.30, duration: 0.9 },  // E6
+    ];
+
+    notes.forEach(({ freq, start, duration }) => {
+      const osc  = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      // Blend sine + triangle for a warmer bell timbre
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime + start);
+
+      gain.gain.setValueAtTime(0, audioCtx.currentTime + start);
+      gain.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + start + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + start + duration);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(audioCtx.currentTime + start);
+      osc.stop(audioCtx.currentTime + start + duration);
+    });
   }
 
   // ── UTILS ────────────────────────────────────────────────────────────────────
@@ -884,197 +669,10 @@
     setTimeout(() => el.classList.remove("show"), 3000);
   }
 
-  let chimeUnlocked = false;
-  document.addEventListener("click", () => { chimeUnlocked = true; }, { once: true });
-
-  function playChime() {
-    if (!chimeUnlocked) return;
-    try {
-      const ctx = new AudioContext();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.setValueAtTime(880, ctx.currentTime);
-      osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.15, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.5);
-    } catch (e) {}
-  }
-
   // ── INIT ─────────────────────────────────────────────────────────────────────
   connect();
   renderRooms();
-
-  // Refresh elapsed times every 30s
-  setInterval(renderAll, 30000);
-
-  // ── VITALS MODAL ─────────────────────────────────────────────────────────────
-  let vitalsRoomId = null;
-  let currentPatient = null; // { demographicNo, firstName, lastName, dateOfBirth }
-  let cameraStream = null;
-
-  function openVitals(roomId) {
-    vitalsRoomId = roomId;
-    currentPatient = null;
-    document.getElementById("vitals-modal").style.display = "flex";
-    document.getElementById("patient-result").style.display = "none";
-    document.getElementById("vitals-form").style.display = "none";
-    document.getElementById("save-vitals-btn").style.display = "none";
-    document.getElementById("oscar-status").style.display = "none";
-    document.getElementById("hcn-input").value = "";
-    ["v-bp-sys","v-bp-dia","v-hr","v-o2","v-ht","v-wt","v-temp"].forEach(id => {
-      document.getElementById(id).value = "";
-    });
-    stopCamera();
-  }
-
-  function closeVitals() {
-    document.getElementById("vitals-modal").style.display = "none";
-    stopCamera();
-  }
-
-  // Camera scan
-  async function startScan() {
-    try {
-      cameraStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 } }
-      });
-      const video = document.getElementById("camera-video");
-      video.srcObject = cameraStream;
-      document.getElementById("camera-area").style.display = "block";
-      document.getElementById("camera-capture-img").style.display = "none";
-      document.getElementById("scan-btn").textContent = "📸 Capture";
-      document.getElementById("scan-btn").onclick = captureFrame;
-    } catch (e) {
-      setOscarStatus("Camera not available: " + e.message, "error");
-    }
-  }
-
-  function captureFrame() {
-    const video = document.getElementById("camera-video");
-    const canvas = document.getElementById("camera-canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext("2d").drawImage(video, 0, 0);
-    document.getElementById("captured-img").src = canvas.toDataURL("image/jpeg", 0.9);
-    document.getElementById("camera-area").style.display = "none";
-    document.getElementById("camera-capture-img").style.display = "block";
-    document.getElementById("scan-btn").textContent = "📷 Scan Card";
-    document.getElementById("scan-btn").onclick = startScan;
-    stopCamera();
-    document.getElementById("hcn-input").focus();
-  }
-
-  function retakeScan() {
-    document.getElementById("camera-capture-img").style.display = "none";
-    startScan();
-  }
-
-  function stopCamera() {
-    if (cameraStream) {
-      cameraStream.getTracks().forEach(t => t.stop());
-      cameraStream = null;
-    }
-    document.getElementById("camera-area").style.display = "none";
-  }
-
-  async function lookupPatient() {
-    const hcn = document.getElementById("hcn-input").value.replace(/\s/g, "");
-    if (!hcn) { setOscarStatus("Enter a Health Card Number first.", "warn"); return; }
-
-    setOscarStatus("Looking up patient…", "info");
-    try {
-      const res = await fetch("/api/patient-lookup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hcn }),
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        if (data.error === "OSCAR_NOT_CONFIGURED") {
-          setOscarStatus("OSCAR not configured — vitals form available for manual use.", "warn");
-          document.getElementById("vitals-form").style.display = "block";
-          document.getElementById("save-vitals-btn").style.display = "none";
-        } else {
-          setOscarStatus(data.message || "Lookup failed.", "error");
-        }
-        return;
-      }
-
-      currentPatient = data;
-      document.getElementById("patient-name").textContent = `${data.firstName} ${data.lastName}`;
-      document.getElementById("patient-dob").textContent = `DOB: ${data.dateOfBirth || "—"}  ·  HCN: ${hcn}`;
-      document.getElementById("patient-result").style.display = "block";
-      document.getElementById("vitals-form").style.display = "block";
-      document.getElementById("save-vitals-btn").style.display = "inline-block";
-      setOscarStatus("", "");
-    } catch (e) {
-      setOscarStatus("Network error: " + e.message, "error");
-    }
-  }
-
-  async function saveVitals() {
-    if (!currentPatient) { setOscarStatus("No patient selected.", "error"); return; }
-
-    const measurements = [];
-    const bpSys = document.getElementById("v-bp-sys").value;
-    const bpDia = document.getElementById("v-bp-dia").value;
-    if (bpSys && bpDia) measurements.push({ type: "BP", value: `${bpSys}/${bpDia}`, unit: "mmHg" });
-    const hr = document.getElementById("v-hr").value;
-    if (hr) measurements.push({ type: "HR", value: hr, unit: "bpm" });
-    const o2 = document.getElementById("v-o2").value;
-    if (o2) measurements.push({ type: "O2SAT", value: o2, unit: "%" });
-    const ht = document.getElementById("v-ht").value;
-    if (ht) measurements.push({ type: "HT", value: ht, unit: "cm" });
-    const wt = document.getElementById("v-wt").value;
-    if (wt) measurements.push({ type: "WT", value: wt, unit: "kg" });
-    const temp = document.getElementById("v-temp").value;
-    if (temp) measurements.push({ type: "T", value: temp, unit: "C" });
-
-    if (measurements.length === 0) { setOscarStatus("Enter at least one measurement.", "warn"); return; }
-
-    document.getElementById("save-vitals-btn").disabled = true;
-    setOscarStatus("Saving to OSCAR…", "info");
-
-    try {
-      const res = await fetch("/api/vitals", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ demographicNo: currentPatient.demographicNo, measurements }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setOscarStatus(`✓ ${data.saved} measurement${data.saved !== 1 ? "s" : ""} saved to OSCAR.`, "success");
-        toast(`✓ Vitals saved for ${currentPatient.firstName} ${currentPatient.lastName}`);
-        setTimeout(closeVitals, 2000);
-      } else {
-        setOscarStatus(data.message || "Save failed.", "error");
-      }
-    } catch (e) {
-      setOscarStatus("Network error: " + e.message, "error");
-    } finally {
-      document.getElementById("save-vitals-btn").disabled = false;
-    }
-  }
-
-  function setOscarStatus(msg, level) {
-    const el = document.getElementById("oscar-status");
-    if (!msg) { el.style.display = "none"; return; }
-    const colors = { info: "var(--text-dim)", warn: "var(--gold)", error: "var(--alert-red)", success: "var(--alert-green)" };
-    el.style.display = "block";
-    el.style.color = colors[level] || "var(--text-dim)";
-    el.style.fontSize = "13px";
-    el.textContent = msg;
-  }
-
-  // Close modal on backdrop click
-  document.getElementById("vitals-modal").addEventListener("click", e => {
-    if (e.target === document.getElementById("vitals-modal")) closeVitals();
-  });
+  setInterval(renderAll, 30000); // refresh elapsed times
 </script>
 </body>
 </html>
