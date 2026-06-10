@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clinic Dashboard — Patient Ready</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #E8D5A3;
+      --gold-dim: #8a6f30;
+      --charcoal: #1C1C1E;
+      --charcoal-mid: #2C2C2E;
+      --charcoal-light: #3A3A3C;
+      --ivory: #F5F0E8;
+      --ivory-dim: #DDD5C5;
+      --alert-red: #E05C5C;
+      --alert-green: #5CB87A;
+      --text-primary: #F5F0E8;
+      --text-dim: #9A9087;
+      --radius: 12px;
+      --radius-lg: 20px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--charcoal);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--charcoal-light);
+      background: var(--charcoal-mid);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+
+    .brand-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--gold-light);
+      letter-spacing: 0.04em;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #888;
+      display: inline-block;
+      margin-right: 6px;
+      transition: background 0.3s;
+    }
+    .status-dot.connected { background: var(--alert-green); box-shadow: 0 0 8px var(--alert-green); }
+    .status-dot.disconnected { background: var(--alert-red); }
+
+    .status-label {
+      font-size: 12px;
+      color: var(--text-dim);
+      font-weight: 400;
+    }
+
+    .clock {
+      font-size: 14px;
+      color: var(--text-dim);
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      min-width: 72px;
+      text-align: right;
+    }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* ── SECTION TITLE ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--gold);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .badge {
+      background: var(--alert-red);
+      color: white;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      display: none;
+    }
+    .badge.visible { display: inline-block; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      background: var(--charcoal-mid);
+      border: 1px solid var(--charcoal-light);
+      border-radius: var(--radius-lg);
+      padding: 48px 32px;
+      text-align: center;
+      display: none;
+    }
+    .empty-state.visible { display: block; }
+
+    .empty-icon { font-size: 36px; margin-bottom: 14px; opacity: 0.4; }
+    .empty-text { color: var(--text-dim); font-size: 14px; font-weight: 300; letter-spacing: 0.04em; }
+
+    /* ── ALERT CARDS ── */
+    #alerts-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .alert-card {
+      background: var(--charcoal-mid);
+      border: 1px solid var(--charcoal-light);
+      border-left: 4px solid var(--alert-red);
+      border-radius: var(--radius-lg);
+      padding: 22px 26px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      animation: slideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    .alert-card.acknowledged {
+      border-left-color: var(--alert-green);
+      opacity: 0.6;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .alert-pulse {
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--alert-red);
+      flex-shrink: 0;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    .alert-card.acknowledged .alert-pulse {
+      background: var(--alert-green);
+      animation: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50%       { transform: scale(1.4); opacity: 0.5; }
+    }
+
+    .alert-body { flex: 1; min-width: 0; }
+
+    .alert-room {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.02em;
+      margin-bottom: 4px;
+    }
+
+    .alert-meta {
+      font-size: 12px;
+      color: var(--text-dim);
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      display: flex;
+      gap: 16px;
+    }
+
+    .alert-meta span { display: flex; align-items: center; gap: 5px; }
+
+    .click-badge {
+      background: var(--charcoal-light);
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 10px;
+      color: var(--gold-light);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .ack-btn {
+      background: transparent;
+      border: 1px solid var(--gold-dim);
+      color: var(--gold-light);
+      font-family: 'Jost', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 10px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .ack-btn:hover {
+      background: var(--gold-dim);
+      color: var(--charcoal);
+      border-color: var(--gold-dim);
+    }
+
+    .ack-btn:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    /* ── DIVIDER ── */
+    hr {
+      border: none;
+      border-top: 1px solid var(--charcoal-light);
+    }
+
+    /* ── ROOM STATUS GRID ── */
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .room-tile {
+      background: var(--charcoal-mid);
+      border: 1px solid var(--charcoal-light);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      user-select: none;
+    }
+
+    .room-tile:hover {
+      border-color: var(--gold-dim);
+    }
+
+    .room-tile:active {
+      background: var(--charcoal-light);
+    }
+
+    .room-tile-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+
+    .room-tile-status {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .room-tile-hint {
+      font-size: 10px;
+      color: var(--charcoal-light);
+      margin-top: 4px;
+      font-weight: 300;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 16px 32px;
+      border-top: 1px solid var(--charcoal-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-text {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-weight: 300;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--charcoal-light);
+      color: var(--text-primary);
+      border-left: 3px solid var(--gold);
+      padding: 14px 20px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 400;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">🩺</div>
+      <div>
+        <div class="brand-name">Clinic Dashboard</div>
+        <div class="brand-sub">Patient Ready System</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span>
+        <span class="status-dot" id="ws-dot"></span>
+        <span class="status-label" id="ws-label">Connecting…</span>
+      </span>
+      <div class="clock" id="clock">--:--</div>
+    </div>
+  </header>
+
+  <!-- ── MAIN ── -->
+  <main>
+
+    <!-- Active Alerts -->
+    <div>
+      <div class="section-header" style="margin-bottom: 16px;">
+        <span class="section-title">Active Alerts</span>
+        <span class="badge" id="alert-badge">0</span>
+      </div>
+
+      <div class="empty-state visible" id="empty-state">
+        <div class="empty-icon">✓</div>
+        <div class="empty-text">All clear — no rooms waiting</div>
+      </div>
+
+      <div id="alerts-container"></div>
+    </div>
+
+    <hr />
+
+    <!-- Room Quick-Test (dev / in-clinic demo) -->
+    <div>
+      <div class="section-header" style="margin-bottom: 16px;">
+        <span class="section-title">Room Buttons</span>
+        <span class="section-title" style="font-size:11px; color: var(--text-dim); font-family: Jost;">tap to simulate a press</span>
+      </div>
+      <div class="rooms-grid" id="rooms-grid"></div>
+    </div>
+
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <span class="footer-text">Smart Button System · Flic 2 via WebSocket</span>
+    <span class="footer-text" id="last-event">No events yet</span>
+  </footer>
+
+  <div id="toast"></div>
+
+  <!-- ── AUDIO (optional alert chime) ── -->
+  <audio id="chime" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFhoeGhoOCf3tyaVxQRTxAN0EvKSsnKCouNT5JVWBrb3B0eXt7e3t7e3t4dG9pY11VTkdAOTIsJyMiIiQoLjY/SlZhbHJ2en19fn5+fn5+fn59fXx7eXd1c3FwbnZi" type="audio/wav" />
+  </audio>
+
+<script>
+  // ── CONFIG ──────────────────────────────────────────────────────────────────
+  const WS_URL = `ws://${location.host}`;
+
+  const ROOMS = [
+    { id: "room_1",             label: "Room 1" },
+    { id: "room_2",             label: "Room 2" },
+    { id: "room_3",             label: "Room 3" },
+    { id: "aesthetics_suite",   label: "Aesthetics Suite" },
+  ];
+
+  // ── STATE ───────────────────────────────────────────────────────────────────
+  let ws;
+  let alerts = {}; // roomId → alert object
+
+  // ── CLOCK ───────────────────────────────────────────────────────────────────
+  function updateClock() {
+    const now = new Date();
+    document.getElementById("clock").textContent =
+      now.toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit" });
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ── WEBSOCKET ────────────────────────────────────────────────────────────────
+  function connect() {
+    ws = new WebSocket(WS_URL);
+
+    ws.onopen = () => {
+      setStatus(true);
+      toast("Connected to clinic server");
+    };
+
+    ws.onclose = () => {
+      setStatus(false);
+      setTimeout(connect, 3000);
+    };
+
+    ws.onerror = () => setStatus(false);
+
+    ws.onmessage = ({ data }) => {
+      try {
+        const msg = JSON.parse(data);
+        handleMessage(msg);
+      } catch (e) {}
+    };
+  }
+
+  function setStatus(online) {
+    document.getElementById("ws-dot").className = "status-dot " + (online ? "connected" : "disconnected");
+    document.getElementById("ws-label").textContent = online ? "Connected" : "Reconnecting…";
+  }
+
+  function send(obj) {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(obj));
+    }
+  }
+
+  // ── MESSAGE HANDLER ──────────────────────────────────────────────────────────
+  function handleMessage(msg) {
+    if (msg.type === "state") {
+      alerts = msg.alerts || {};
+      renderAll();
+    } else if (msg.type === "alert") {
+      alerts[msg.alert.roomId] = msg.alert;
+      renderAll();
+      playChime();
+      toast(`🔔 ${msg.alert.room} — Patient ready`);
+      updateLastEvent(msg.alert.room);
+    } else if (msg.type === "acknowledged") {
+      if (alerts[msg.roomId]) alerts[msg.roomId].acknowledged = true;
+      renderAll();
+    } else if (msg.type === "cleared") {
+      delete alerts[msg.roomId];
+      renderAll();
+    }
+  }
+
+  // ── RENDER ───────────────────────────────────────────────────────────────────
+  function renderAll() {
+    const container = document.getElementById("alerts-container");
+    const emptyState = document.getElementById("empty-state");
+    const badge = document.getElementById("alert-badge");
+
+    const activeAlerts = Object.values(alerts).filter(a => !a.acknowledged);
+    const allAlerts = Object.values(alerts);
+
+    // Badge
+    if (activeAlerts.length > 0) {
+      badge.textContent = activeAlerts.length;
+      badge.classList.add("visible");
+    } else {
+      badge.classList.remove("visible");
+    }
+
+    // Empty state
+    if (allAlerts.length === 0) {
+      emptyState.classList.add("visible");
+    } else {
+      emptyState.classList.remove("visible");
+    }
+
+    // Clear and rebuild cards
+    container.innerHTML = "";
+    allAlerts.forEach(alert => {
+      const card = buildAlertCard(alert);
+      container.appendChild(card);
+    });
+
+    // Update room tiles
+    renderRooms();
+  }
+
+  function buildAlertCard(alert) {
+    const card = document.createElement("div");
+    card.className = "alert-card" + (alert.acknowledged ? " acknowledged" : "");
+    card.dataset.roomId = alert.roomId;
+
+    const elapsed = formatElapsed(alert.time);
+    const clickLabel = { single: "Single press", double: "Double press", hold: "Hold" }[alert.clickType] || alert.clickType;
+
+    card.innerHTML = `
+      <div class="alert-pulse"></div>
+      <div class="alert-body">
+        <div class="alert-room">${alert.room}</div>
+        <div class="alert-meta">
+          <span>🕐 ${elapsed}</span>
+          <span class="click-badge">${clickLabel}</span>
+        </div>
+      </div>
+      <button class="ack-btn" onclick="acknowledge('${alert.roomId}')" ${alert.acknowledged ? "disabled" : ""}>
+        ${alert.acknowledged ? "✓ Done" : "Acknowledge"}
+      </button>
+    `;
+
+    return card;
+  }
+
+  function renderRooms() {
+    const grid = document.getElementById("rooms-grid");
+    grid.innerHTML = "";
+
+    ROOMS.forEach(room => {
+      const hasAlert = alerts[room.id] && !alerts[room.id]?.acknowledged;
+      const tile = document.createElement("div");
+      tile.className = "room-tile";
+      tile.style.borderLeftColor = hasAlert ? "var(--alert-red)" : "var(--charcoal-light)";
+      if (hasAlert) tile.style.borderLeft = "3px solid var(--alert-red)";
+
+      tile.innerHTML = `
+        <div class="room-tile-name">${room.label}</div>
+        <div class="room-tile-status">${hasAlert ? "⚠ Patient ready" : "Available"}</div>
+        <div class="room-tile-hint">Click to test</div>
+      `;
+
+      tile.onclick = () => {
+        send({ type: "test_press", buttonId: "demo", roomOverride: room.id });
+        // Also trigger locally for demo
+        handleMessage({
+          type: "alert",
+          alert: {
+            roomId: room.id,
+            room: room.label,
+            label: room.label,
+            clickType: "single",
+            time: new Date().toISOString(),
+            acknowledged: false,
+          },
+        });
+      };
+
+      grid.appendChild(tile);
+    });
+  }
+
+  // ── ACKNOWLEDGE ──────────────────────────────────────────────────────────────
+  function acknowledge(roomId) {
+    send({ type: "acknowledge", roomId });
+    // Optimistic local update
+    if (alerts[roomId]) {
+      alerts[roomId].acknowledged = true;
+      renderAll();
+      toast(`✓ ${alerts[roomId]?.room || roomId} acknowledged`);
+      setTimeout(() => {
+        delete alerts[roomId];
+        renderAll();
+      }, 2000);
+    }
+  }
+
+  // ── UTILS ────────────────────────────────────────────────────────────────────
+  function formatElapsed(isoTime) {
+    const diff = Math.floor((Date.now() - new Date(isoTime)) / 1000);
+    if (diff < 60) return `${diff}s ago`;
+    return `${Math.floor(diff / 60)}m ago`;
+  }
+
+  function updateLastEvent(room) {
+    const now = new Date().toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit" });
+    document.getElementById("last-event").textContent = `Last: ${room} at ${now}`;
+  }
+
+  function toast(msg) {
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    setTimeout(() => el.classList.remove("show"), 3000);
+  }
+
+  let chimeUnlocked = false;
+  document.addEventListener("click", () => { chimeUnlocked = true; }, { once: true });
+
+  function playChime() {
+    if (!chimeUnlocked) return;
+    try {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.5);
+    } catch (e) {}
+  }
+
+  // ── INIT ─────────────────────────────────────────────────────────────────────
+  connect();
+  renderRooms();
+
+  // Refresh elapsed times every 30s
+  setInterval(renderAll, 30000);
+</script>
+</body>
+</html>

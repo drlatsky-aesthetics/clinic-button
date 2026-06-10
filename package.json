@@ -1,0 +1,25 @@
+{
+  "name": "clinic-button-server",
+  "version": "1.0.0",
+  "description": "Flic smart button → WebSocket → clinic patient-ready dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "demo": "DEMO_MODE=true node server.js",
+    "live": "FLIC_HUB_HOST=192.168.1.100 node server.js",
+    "service:start": "npx pm2 start server.js --name clinic-buttons",
+    "service:stop": "npx pm2 stop clinic-buttons",
+    "service:restart": "npx pm2 restart clinic-buttons",
+    "service:logs": "npx pm2 logs clinic-buttons",
+    "service:status": "npx pm2 status"
+  },
+  "dependencies": {
+    "ws": "^8.17.0"
+  },
+  "optionalDependencies": {
+    "flic-hub-sdk-js": "^1.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

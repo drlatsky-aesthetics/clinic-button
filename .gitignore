@@ -1,0 +1,6 @@
+node_modules/
+.env
+alerts.db
+*.db-journal
+.DS_Store
+.claude/settings.local.json
