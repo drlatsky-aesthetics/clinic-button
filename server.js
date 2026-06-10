@@ -192,14 +192,7 @@ function connectFlicHub() {
 // ─── DEMO MODE: Simulate a press every 15s for testing ───────────────────────
 
 function startDemoMode() {
-  console.log("[DEMO] Demo mode active — simulating button presses every 15s");
-  console.log("[DEMO] Or trigger manually from the dashboard.");
-  const rooms = Object.keys(BUTTON_MAP).filter(k => k !== "demo");
-  let i = 0;
-  setInterval(() => {
-    handleButtonPress(rooms[i % rooms.length], "single");
-    i++;
-  }, 15000);
+  console.log("[DEMO] Demo mode active — use room tiles on the dashboard to simulate presses.");
 }
 
 // ─── START ────────────────────────────────────────────────────────────────────
