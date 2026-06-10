@@ -579,18 +579,7 @@
       `;
 
       tile.onclick = () => {
-        send({ type: "test_press", buttonId: "demo", roomOverride: room.id });
-        handleMessage({
-          type: "alert",
-          alert: {
-            roomId: room.id,
-            room: room.label,
-            label: room.label,
-            clickType: "single",
-            time: new Date().toISOString(),
-            acknowledged: false,
-          },
-        });
+        send({ type: "test_press", roomId: room.id, room: room.label });
       };
 
       grid.appendChild(tile);

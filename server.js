@@ -77,7 +77,16 @@ wss.on("connection", (ws) => {
         handleAcknowledge(msg.roomId);
       }
       if (msg.type === "test_press") {
-        handleButtonPress(msg.buttonId || "demo", "single");
+        if (msg.roomId) {
+          // Direct room test from dashboard tile — synthesize alert without BUTTON_MAP lookup
+          const roomId = msg.roomId;
+          const room   = msg.room || roomId.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+          const alert  = { roomId, room, label: room, clickType: "single", time: new Date().toISOString(), acknowledged: false };
+          alerts[roomId] = alert;
+          broadcast({ type: "alert", alert });
+        } else {
+          handleButtonPress(msg.buttonId || "demo", "single");
+        }
       }
     } catch (e) {
       console.error("[WS] Bad message:", e.message);
@@ -185,7 +194,7 @@ function connectFlicHub() {
 function startDemoMode() {
   console.log("[DEMO] Demo mode active — simulating button presses every 15s");
   console.log("[DEMO] Or trigger manually from the dashboard.");
-  const rooms = Object.keys(BUTTON_MAP);
+  const rooms = Object.keys(BUTTON_MAP).filter(k => k !== "demo");
   let i = 0;
   setInterval(() => {
     handleButtonPress(rooms[i % rooms.length], "single");
