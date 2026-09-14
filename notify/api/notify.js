@@ -50,12 +50,14 @@ async function sendNtfy({ title, body }) {
   const topic = process.env.NTFY_TOPIC;
   if (!topic) throw new Error("NTFY_TOPIC is not set");
   const base = (process.env.NTFY_SERVER || "https://ntfy.sh").replace(/\/$/, "");
-  const headers = { Title: title, Priority: "urgent", Tags: "bell" };
+  // Publish as JSON rather than headers: HTTP headers are Latin-1 only, and
+  // the title contains an em dash, which would throw before the request is sent.
+  const headers = { "Content-Type": "application/json" };
   if (process.env.NTFY_TOKEN) headers.Authorization = `Bearer ${process.env.NTFY_TOKEN}`;
-  const r = await fetch(`${base}/${encodeURIComponent(topic)}`, {
+  const r = await fetch(base, {
     method: "POST",
     headers,
-    body,
+    body: JSON.stringify({ topic, title, message: body, priority: 5, tags: ["bell"] }),
   });
   if (!r.ok) throw new Error(`ntfy responded ${r.status}`);
 }
