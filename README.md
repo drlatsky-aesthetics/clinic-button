@@ -109,7 +109,7 @@ pm2 save
 ## Page Dr. Latsky's Phone (no hardware needed)
 
 The `notify/` folder is a separate, tiny Vercel project: staff open a web page,
-tap a room, and the doctor's cell gets a free push notification (ntfy or
+tap one button, and the doctor's cell gets a free push notification (ntfy or
 Telegram) or a real SMS (Twilio). It runs in the cloud, so it works from any
 phone or tablet and does not need the Flic hub or the LAN server.
 

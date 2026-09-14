@@ -1,16 +1,16 @@
 # Clinic Notify — Vercel project
 
-A single web page for clinic staff. They tap a room, and Dr. Latsky's phone gets
-a notification within a second or two. No hardware, no LAN, works from any phone
-or tablet with internet.
+A single web page for clinic staff with one big button. They tap it, and
+Dr. Latsky's phone gets a "You're needed — Treasury Medical" alert within a
+second or two. No hardware, no LAN, works from any phone or tablet with internet.
 
 ```
 [Staff phone/tablet] → public/index.html → POST /api/notify → ntfy / Telegram / Pushover / Twilio → [Dr. Latsky's phone]
 ```
 
-The page asks for a shared PIN once per device and remembers it. Messages
-contain the room name and time only — no patient information ever leaves the
-clinic (PHIPA).
+The page asks for a shared PIN once per device and remembers it. The message
+is a fixed line plus the time — no patient information ever leaves the clinic
+(PHIPA).
 
 ---
 
@@ -56,7 +56,7 @@ Redeploys happen automatically whenever this folder changes on the main branch.
 2. Tap **+** → Subscribe to topic → enter the exact `NTFY_TOPIC` value.
 3. In the app's settings, turn on **Instant delivery** (Android) so it is not
    delayed by battery saving. On iPhone this is on by default.
-4. Test: open the Vercel URL, enter the PIN, tap a room.
+4. Test: open the Vercel URL, enter the PIN, tap the button.
 
 The topic name is the only secret, so make it long and random. Anyone who knows
 it can subscribe. For a locked topic, create a free ntfy.sh account, reserve the
@@ -87,25 +87,18 @@ topic, and set `NTFY_TOKEN`.
 
 ## API
 
-`POST /api/notify` with header `X-Staff-PIN: <pin>` and JSON body:
-
-```json
-{ "roomId": "room_1", "clickType": "single" }
-```
-
-`roomId` is one of `room_1`, `room_2`, `room_3`, `aesthetics_suite`.
-`clickType` is `single` (patient ready), `double` (urgent) or `hold` (emergency).
-Repeat presses of the same room within 15 seconds are ignored with `429`.
+`POST /api/notify` with header `X-Staff-PIN: <pin>` and an empty JSON body `{}`.
+Returns `{ ok: true, time }`. Repeat presses within 10 seconds are ignored
+with `429`.
 
 This endpoint is also a handy target for a physical Flic button's "Internet
-Request" action, so the existing Flic buttons can page the doctor directly
-without the LAN server.
+Request" action, so a Flic button can page the doctor directly without the LAN
+server.
 
----
+## Changing the wording
 
-## Adding a room
-
-Edit `ROOMS` in both `api/notify.js` and `public/index.html`, then push.
+Set `CLINIC_NAME` (default `Treasury Medical`) and `ALERT_TITLE` (default
+`You're needed`) as environment variables. No code change needed.
 
 ## Local testing
 

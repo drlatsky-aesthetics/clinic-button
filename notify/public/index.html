@@ -2,9 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="robots" content="noindex" />
-  <title>Notify Dr. Latsky — Patient Ready</title>
+  <meta name="theme-color" content="#1C1C1E" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Treasury Medical — Notify Dr. Latsky</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
@@ -25,12 +28,14 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     [hidden] { display: none !important; }
 
+    html, body { height: 100%; }
+
     body {
       font-family: 'Jost', sans-serif;
       background: var(--charcoal);
       color: var(--ivory);
       min-height: 100vh;
-      padding: 24px 16px 40px;
+      padding: 32px 16px 40px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -39,7 +44,7 @@
     h1 {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 500;
-      font-size: 28px;
+      font-size: 30px;
       color: var(--gold-light);
       letter-spacing: 0.04em;
       text-align: center;
@@ -50,73 +55,89 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--text-dim);
-      margin: 6px 0 28px;
+      margin: 6px 0 0;
       text-align: center;
     }
 
-    .panel {
+    main {
+      flex: 1;
       width: 100%;
-      max-width: 520px;
+      max-width: 420px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-    }
-
-    .room {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-    }
-
-    button {
-      font-family: inherit;
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      color: var(--ivory);
-      transition: transform 0.08s ease, background 0.15s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-    button:active { transform: scale(0.97); }
-    button:disabled { opacity: 0.5; cursor: wait; }
-
-    .ready {
-      background: var(--charcoal-mid);
-      border: 1px solid var(--charcoal-light);
-      padding: 24px 20px;
-      font-size: 19px;
-      font-weight: 500;
-      text-align: left;
-      display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-    }
-    .ready:hover { background: var(--charcoal-light); }
-    .ready small {
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 400;
-      white-space: nowrap;
-      margin-left: 12px;
+      gap: 22px;
+      padding: 24px 0;
     }
 
-    .urgent {
-      background: transparent;
-      border: 1px solid var(--alert-red);
-      color: var(--alert-red);
-      font-size: 12px;
-      letter-spacing: 0.1em;
+    /* ── the one button ── */
+    #call {
+      width: min(78vw, 300px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.10), transparent 55%),
+        linear-gradient(160deg, var(--gold) 0%, var(--gold-dim) 100%);
+      color: var(--charcoal);
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 22px;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      padding: 0 18px;
+      line-height: 1.25;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow:
+        0 0 0 10px rgba(201, 168, 76, 0.10),
+        0 0 0 22px rgba(201, 168, 76, 0.05),
+        0 18px 40px rgba(0, 0, 0, 0.45);
+      transition: transform 0.1s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
-    .urgent:hover { background: rgba(224, 92, 92, 0.12); }
+    #call .icon { font-size: 44px; line-height: 1; }
+    #call small {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      opacity: 0.8;
+    }
+    #call:hover { filter: brightness(1.05); }
+    #call:active { transform: scale(0.96); }
+    #call:disabled { filter: saturate(0.4) brightness(0.8); cursor: wait; transform: none; }
+
+    #call.sent {
+      background: linear-gradient(160deg, var(--alert-green), #3e8a58);
+      border-color: var(--alert-green);
+      color: var(--ivory);
+      box-shadow:
+        0 0 0 10px rgba(92, 184, 122, 0.14),
+        0 0 0 22px rgba(92, 184, 122, 0.06),
+        0 18px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    #status {
+      min-height: 22px;
+      font-size: 15px;
+      text-align: center;
+      color: var(--text-dim);
+      transition: color 0.2s ease;
+    }
+    #status.ok { color: var(--alert-green); }
+    #status.err { color: var(--alert-red); }
 
     /* ── PIN gate ── */
     #gate {
       width: 100%;
-      max-width: 360px;
+      max-width: 340px;
       background: var(--charcoal-mid);
       border: 1px solid var(--charcoal-light);
       border-radius: var(--radius);
@@ -140,6 +161,10 @@
     }
     #gate input:focus { border-color: var(--gold); }
     #gate button {
+      font-family: inherit;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
       background: linear-gradient(135deg, var(--gold), var(--gold-dim));
       color: var(--charcoal);
       font-weight: 600;
@@ -148,130 +173,95 @@
       letter-spacing: 0.06em;
     }
 
-    /* ── toast ── */
-    #toast {
-      position: fixed;
-      left: 50%;
-      bottom: 28px;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--charcoal-mid);
-      border: 1px solid var(--charcoal-light);
-      border-left: 4px solid var(--gold);
-      color: var(--ivory);
-      padding: 14px 20px;
-      border-radius: 10px;
-      font-size: 15px;
-      max-width: calc(100% - 32px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
-    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    #toast.ok { border-left-color: var(--alert-green); }
-    #toast.err { border-left-color: var(--alert-red); }
-
     .footer {
-      margin-top: 32px;
       font-size: 12px;
       color: var(--text-dim);
       text-align: center;
+      line-height: 1.7;
     }
     .footer a { color: var(--text-dim); }
   </style>
 </head>
 <body>
-  <h1>Treasury Aesthetics</h1>
-  <div class="sub">Notify Dr. Latsky</div>
+  <header>
+    <h1>Treasury Medical</h1>
+    <div class="sub">Notify Dr. Latsky</div>
+  </header>
 
-  <form id="gate" hidden autocomplete="off">
-    <label for="pin">Enter the staff PIN once on this device</label>
-    <input id="pin" type="password" inputmode="numeric" placeholder="••••" required />
-    <button type="submit">Unlock</button>
-  </form>
+  <main>
+    <form id="gate" hidden autocomplete="off">
+      <label for="pin">Enter the staff PIN once on this device</label>
+      <input id="pin" type="password" inputmode="numeric" placeholder="••••" required />
+      <button type="submit">Unlock</button>
+    </form>
 
-  <div id="panel" class="panel" hidden></div>
-
-  <div id="toast" role="status" aria-live="polite"></div>
+    <button id="call" hidden type="button" aria-label="Notify Dr. Latsky">
+      <span class="icon">🔔</span>
+      <span>Notify<br />Dr. Latsky</span>
+      <small>Tap once</small>
+    </button>
+    <div id="status" role="status" aria-live="polite"></div>
+  </main>
 
   <div class="footer">
-    Room name only is sent — never patient details.<br />
+    Sends a "you're needed" alert to Dr. Latsky's phone.<br />
+    No patient details are ever sent.<br />
     <a href="#" id="forget">Forget PIN on this device</a>
   </div>
 
   <script>
-    const ROOMS = [
-      { id: "room_1",           label: "Room 1" },
-      { id: "room_2",           label: "Room 2" },
-      { id: "room_3",           label: "Room 3" },
-      { id: "aesthetics_suite", label: "Aesthetics Suite" },
-    ];
-
     const PIN_KEY = "clinic_staff_pin";
     const gate = document.getElementById("gate");
-    const panel = document.getElementById("panel");
-    const toast = document.getElementById("toast");
-    let toastTimer;
+    const call = document.getElementById("call");
+    const status = document.getElementById("status");
+    let resetTimer;
 
     const getPin = () => { try { return localStorage.getItem(PIN_KEY) || ""; } catch { return ""; } };
     const setPin = (v) => { try { v ? localStorage.setItem(PIN_KEY, v) : localStorage.removeItem(PIN_KEY); } catch {} };
 
-    function showToast(msg, kind) {
-      clearTimeout(toastTimer);
-      toast.textContent = msg;
-      toast.className = "show " + kind;
-      toastTimer = setTimeout(() => (toast.className = ""), 3500);
+    function setStatus(msg, kind) {
+      status.textContent = msg;
+      status.className = kind || "";
     }
 
     function render() {
       const unlocked = Boolean(getPin());
       gate.hidden = unlocked;
-      panel.hidden = !unlocked;
-      if (!unlocked) { document.getElementById("pin").focus(); return; }
-
-      panel.innerHTML = "";
-      ROOMS.forEach((room) => {
-        const row = document.createElement("div");
-        row.className = "room";
-
-        const ready = document.createElement("button");
-        ready.className = "ready";
-        ready.innerHTML = `<span>${room.label}</span><small>Patient ready</small>`;
-        ready.onclick = () => send(room, "single", [ready, urgent]);
-
-        const urgent = document.createElement("button");
-        urgent.className = "urgent";
-        urgent.textContent = "Urgent";
-        urgent.onclick = () => send(room, "double", [ready, urgent]);
-
-        row.append(ready, urgent);
-        panel.appendChild(row);
-      });
+      call.hidden = !unlocked;
+      setStatus("");
+      if (!unlocked) document.getElementById("pin").focus();
     }
 
-    async function send(room, clickType, buttons) {
-      buttons.forEach((b) => (b.disabled = true));
+    async function notify() {
+      clearTimeout(resetTimer);
+      call.disabled = true;
+      setStatus("Sending…");
       try {
         const r = await fetch("/api/notify", {
           method: "POST",
           headers: { "Content-Type": "application/json", "X-Staff-PIN": getPin() },
-          body: JSON.stringify({ roomId: room.id, clickType }),
+          body: JSON.stringify({}),
         });
         const data = await r.json().catch(() => ({}));
         if (r.status === 401) {
           setPin("");
-          showToast("PIN rejected — please enter it again", "err");
           render();
+          setStatus("PIN rejected — please enter it again", "err");
           return;
         }
         if (!r.ok) throw new Error(data.error || `Error ${r.status}`);
-        showToast(`Sent — ${room.label}${clickType === "double" ? " (urgent)" : ""}`, "ok");
-        if (navigator.vibrate) navigator.vibrate(60);
+        call.classList.add("sent");
+        setStatus(`Sent — Dr. Latsky has been notified (${data.time})`, "ok");
+        if (navigator.vibrate) navigator.vibrate(80);
+        resetTimer = setTimeout(() => { call.classList.remove("sent"); setStatus(""); }, 6000);
       } catch (err) {
-        showToast(err.message || "Could not send", "err");
+        setStatus(err.message || "Could not send", "err");
       } finally {
-        buttons.forEach((b) => (b.disabled = false));
+        call.disabled = false;
       }
     }
+
+    call.addEventListener("click", notify);
 
     gate.addEventListener("submit", (e) => {
       e.preventDefault();

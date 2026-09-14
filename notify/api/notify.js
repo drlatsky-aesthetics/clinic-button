@@ -1,6 +1,6 @@
 // Vercel serverless function: POST /api/notify
-// Receives a "patient ready" press from the staff page and forwards it to
-// Dr. Latsky's phone via whichever provider NOTIFY_PROVIDER selects.
+// Receives a press from the staff page and pages Dr. Latsky's phone via
+// whichever provider NOTIFY_PROVIDER selects.
 //
 // Providers (set NOTIFY_PROVIDER to one of these):
 //   ntfy      – free push notification, no account (ntfy.sh app on the phone)
@@ -8,26 +8,16 @@
 //   pushover  – one-time $5 app purchase, then free
 //   twilio    – real SMS text message (paid per message + phone number rental)
 //
-// PHIPA note: messages contain the room name only. Never put patient names,
-// health card numbers, or any clinical detail in a notification.
+// PHIPA note: the message is a fixed "you're needed" line plus the time.
+// Never put patient names, health card numbers, or clinical detail in it.
 
-const ROOMS = {
-  room_1: "Room 1",
-  room_2: "Room 2",
-  room_3: "Room 3",
-  aesthetics_suite: "Aesthetics Suite",
-};
-
-const CLICK_LABEL = {
-  single: "Patient ready",
-  double: "URGENT — needs attention",
-  hold: "EMERGENCY — physician now",
-};
+const CLINIC = process.env.CLINIC_NAME || "Treasury Medical";
+const TITLE = process.env.ALERT_TITLE || "You're needed";
 
 // Best-effort flood protection. Serverless instances don't share memory, so
 // this only limits repeat presses that land on the same warm instance.
-const COOLDOWN_MS = 15 * 1000;
-const lastSent = new Map();
+const COOLDOWN_MS = 10 * 1000;
+let lastSent = 0;
 
 function json(res, status, body) {
   res.setHeader("Content-Type", "application/json");
@@ -52,19 +42,15 @@ function torontoTime() {
   }).format(new Date());
 }
 
-// Each provider gets { title, body, time, urgent }:
-//   title = "Patient ready — Room 1", body = "Room 1 · 12:10 p.m.", time = "12:10 p.m."
+// Each provider gets { title, body, time }:
+//   title = "You're needed — Treasury Medical", body = "Front desk · 12:10 p.m."
 // Push apps show title above body; SMS/Telegram use title + time on one line.
 
-async function sendNtfy({ title, body, urgent }) {
+async function sendNtfy({ title, body }) {
   const topic = process.env.NTFY_TOPIC;
   if (!topic) throw new Error("NTFY_TOPIC is not set");
   const base = (process.env.NTFY_SERVER || "https://ntfy.sh").replace(/\/$/, "");
-  const headers = {
-    Title: title,
-    Priority: urgent ? "urgent" : "high",
-    Tags: urgent ? "rotating_light" : "bell",
-  };
+  const headers = { Title: title, Priority: "urgent", Tags: "bell" };
   if (process.env.NTFY_TOKEN) headers.Authorization = `Bearer ${process.env.NTFY_TOKEN}`;
   const r = await fetch(`${base}/${encodeURIComponent(topic)}`, {
     method: "POST",
@@ -86,17 +72,11 @@ async function sendTelegram({ title, time }) {
   if (!r.ok) throw new Error(`Telegram responded ${r.status}`);
 }
 
-async function sendPushover({ title, body, urgent }) {
+async function sendPushover({ title, body }) {
   const token = process.env.PUSHOVER_APP_TOKEN;
   const user = process.env.PUSHOVER_USER_KEY;
   if (!token || !user) throw new Error("PUSHOVER_APP_TOKEN / PUSHOVER_USER_KEY not set");
-  const form = new URLSearchParams({
-    token,
-    user,
-    title,
-    message: body,
-    priority: urgent ? "1" : "0",
-  });
+  const form = new URLSearchParams({ token, user, title, message: body, priority: "1" });
   const r = await fetch("https://api.pushover.net/1/messages.json", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -162,29 +142,20 @@ module.exports = async (req, res) => {
     return json(res, 401, { ok: false, error: "Wrong PIN" });
   }
 
-  const roomId = String(body.roomId || "");
-  const room = ROOMS[roomId];
-  if (!room) return json(res, 400, { ok: false, error: "Unknown room" });
-
-  const clickType = CLICK_LABEL[body.clickType] ? body.clickType : "single";
-  const urgent = clickType !== "single";
-
   const now = Date.now();
-  const key = `${roomId}:${clickType}`;
-  if (now - (lastSent.get(key) || 0) < COOLDOWN_MS) {
+  if (now - lastSent < COOLDOWN_MS) {
     return json(res, 429, { ok: false, error: "Already sent — wait a few seconds" });
   }
 
   const time = torontoTime();
-  const title = `${CLICK_LABEL[clickType]} — ${room}`;
-  const text = `${room} · ${time}`;
+  const title = `${TITLE} — ${CLINIC}`;
+  const text = `Front desk · ${time}`;
 
   try {
-    await provider({ title, body: text, time, urgent });
-    lastSent.set(key, now);
-    return json(res, 200, { ok: true, room, clickType });
+    await provider({ title, body: text, time });
+    lastSent = now;
+    return json(res, 200, { ok: true, time });
   } catch (err) {
-    // Room name only — nothing patient-identifying is ever logged.
     console.error("[notify] send failed:", err.message);
     return json(res, 502, { ok: false, error: "Could not deliver notification" });
   }

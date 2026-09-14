@@ -18,7 +18,7 @@ A patient-ready notification system for clinic use. Flic 2 Bluetooth buttons (on
 | `server.js` | Node.js HTTP + WebSocket server, Flic Hub TCP client |
 | `dashboard.html` | Front desk browser UI, served by server.js |
 | `package.json` | Dependencies: `ws`, `flic-hub-sdk-js` |
-| `notify/` | Standalone Vercel project: staff web page → `api/notify.js` → push/SMS to the doctor's phone (ntfy, Telegram, Pushover, or Twilio). Zero dependencies; see `notify/README.md` |
+| `notify/` | Standalone Vercel project: one-button staff web page (Treasury Medical) → `api/notify.js` → push/SMS to the doctor's phone (ntfy, Telegram, Pushover, or Twilio). Zero dependencies; see `notify/README.md` |
 
 ---
 
