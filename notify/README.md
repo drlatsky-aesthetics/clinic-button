@@ -31,8 +31,10 @@ specifically want it to arrive as an SMS in your Messages app, use `twilio`.
 
 ## Deploy (about 5 minutes)
 
-1. Go to <https://vercel.com/new>, sign in with GitHub, and import the
-   `clinic-button` repo.
+1. Open this link, which pre-selects the repo:
+   <https://vercel.com/new/import?s=https://github.com/drlatsky-aesthetics/clinic-button>
+   (or go to <https://vercel.com/new>, sign in with GitHub, and import
+   `clinic-button` by hand).
 2. Under **Root Directory** click *Edit* and choose `notify`.
 3. Under **Environment Variables** add at minimum:
    - `STAFF_PIN` — the PIN staff will type, e.g. `2468`
