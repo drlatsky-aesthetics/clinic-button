@@ -1,0 +1,9 @@
+{
+  "name": "clinic-notify",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Staff presses a button on a web page → Dr. Latsky's phone gets a push notification or SMS. Deploys to Vercel.",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
