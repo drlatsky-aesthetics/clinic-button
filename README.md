@@ -106,8 +106,20 @@ pm2 save
 
 ---
 
+## Page Dr. Latsky's Phone (no hardware needed)
+
+The `notify/` folder is a separate, tiny Vercel project: staff open a web page,
+tap one button, and the doctor's cell gets a free push notification (ntfy or
+Telegram) or a real SMS (Twilio). It runs in the cloud, so it works from any
+phone or tablet and does not need the Flic hub or the LAN server.
+
+See [`notify/README.md`](notify/README.md) for the 5-minute deploy.
+
+---
+
 ## Future Enhancements
 - [ ] Persist alert log to SQLite
+- [x] Cloud page → push/SMS to doctor's phone (`notify/`)
 - [ ] SMS/email notification on unacknowledged alert > 5 min
 - [ ] Oscar EMR integration (tag patient encounter)
 - [ ] Multi-location support (Treasury + family practice)

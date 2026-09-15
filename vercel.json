@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "builds": [
+    { "src": "notify/api/notify.js", "use": "@vercel/node" },
+    { "src": "notify/public/**", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/notify", "dest": "/notify/api/notify.js" },
+    { "src": "/", "dest": "/notify/public/index.html" },
+    { "src": "/(.*)", "dest": "/notify/public/$1" }
+  ]
+}
