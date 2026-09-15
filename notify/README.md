@@ -45,7 +45,8 @@ specifically want it to arrive as an SMS in your Messages app, use `twilio`.
    `https://clinic-notify.vercel.app`. Bookmark it on the front-desk phone or
    tablet, or "Add to Home Screen" so it behaves like an app.
 
-Redeploys happen automatically whenever this folder changes on the main branch.
+The live project is linked to this repository. Redeploys happen automatically
+whenever `main` changes; the root `vercel.json` handles building from this folder.
 
 ---
 
