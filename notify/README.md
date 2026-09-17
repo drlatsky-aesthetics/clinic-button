@@ -7,7 +7,7 @@ tablet with internet.
 
 | Button | Colour | Doctor id used by the API |
 |---|---|---|
-| Dr. Latsky | pink | `latsky` |
+| Dr. Latsky | deep rose pink | `latsky` |
 | Dr. Tom | red | `tom` |
 | Dr. Baker | blue | `baker` |
 | Dr. Di Donato | green | `didonato` |
@@ -158,8 +158,9 @@ Set `CLINIC_NAME` (default `Treasury Medical`) and `ALERT_TITLE` (default
 2. Add the same id and name to `DOCTORS` in `public/index.html`.
 3. Add a colour block for that id in the page's CSS, following the existing
    four: `--m-light` / `--m-base` / `--m-dark` for the metal, plus `--edge`,
-   `--ink` and `--ink-shadow`. Keep the ink white on a dark metal and charcoal
-   on a light one so the name stays legible.
+   `--ink` and `--ink-shadow`. All four plates use white ink on a mid-tone
+   metal, which keeps white-text contrast in the 5.3–5.7 range; pick a base
+   dark enough to stay there.
 4. Add their `NTFY_TOPIC_<ID>` in Vercel and subscribe their phone to it.
 
 ## Local testing

@@ -19,7 +19,7 @@ A patient-ready notification system for clinic use. Flic 2 Bluetooth buttons (on
 | `dashboard.html` | Front desk browser UI, served by server.js |
 | `package.json` | Dependencies: `ws`, `flic-hub-sdk-js` |
 | `vercel.json` | Root Vercel config: builds `notify/api/notify.js` + `notify/public` for the Git-linked `clinic-notify` project (production tracks `main`) |
-| `notify/` | Standalone Vercel project: Treasury Medical staff web page with one metallic button per physician (Latsky pink, Tom red, Baker blue, Di Donato green) → `api/notify.js` → push/SMS to that doctor's own channel (ntfy, Telegram, Pushover, or Twilio). Zero dependencies; see `notify/README.md` |
+| `notify/` | Standalone Vercel project: Treasury Medical staff web page with one metallic button per physician (Latsky deep rose, Tom red, Baker blue, Di Donato green; white text on all four) → `api/notify.js` → push/SMS to that doctor's own channel (ntfy, Telegram, Pushover, or Twilio). Zero dependencies; see `notify/README.md` |
 
 ---
 
