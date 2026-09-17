@@ -83,6 +83,25 @@ whenever `main` changes; the root `vercel.json` handles building from this folde
    delayed by battery saving. On iPhone this is on by default.
 4. Test: open the Vercel URL, enter the PIN, tap that doctor's button.
 
+### Making sure it is heard
+
+Alerts are published at ntfy's **priority 5 (max)**, which the app documents as
+"really long vibration bursts, default notification sound with a pop-over
+notification". The sender cannot choose the sound; the receiving phone decides.
+If an alert arrives silently, fix it on the phone:
+
+- **Android.** ntfy creates one notification channel per priority. Open the
+  ntfy app → Settings → the max-priority channel, and set a channel-specific
+  sound and, if the doctor wants to be reachable during Do Not Disturb, turn on
+  **Override Do Not Disturb**. Also turn on **Instant delivery** so messages
+  arrive even in doze mode.
+- **iPhone.** Make sure notifications are allowed for ntfy, the ringer is not
+  muted, and ntfy is added to any Focus mode the doctor uses so alerts are not
+  held back.
+
+Have each doctor confirm they actually hear a test before the page goes to the
+front desk — delivery to ntfy proves nothing about the phone's own settings.
+
 A topic name is the only secret protecting it, so make each one long and random.
 Anyone who knows a name can subscribe to it. For locked topics, create a free
 ntfy.sh account, reserve them, and set `NTFY_TOKEN`.
@@ -122,7 +141,7 @@ doctor:
 
 `doctor` is one of `latsky`, `tom`, `baker`, `didonato`, and defaults to
 `latsky` when omitted. Returns `{ ok: true, doctor, time }`. Repeat presses for
-the same doctor within 10 seconds are ignored with `429`.
+the same doctor within 10 seconds are ignored with `429` ("Sent moments ago").
 
 This endpoint is also a handy target for a physical Flic button's "Internet
 Request" action: give each doctor's button its own body and one press pages

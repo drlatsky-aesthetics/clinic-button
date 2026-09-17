@@ -170,7 +170,7 @@ module.exports = async (req, res) => {
 
   const now = Date.now();
   if (now - (lastSent.get(key) || 0) < COOLDOWN_MS) {
-    return json(res, 429, { ok: false, error: "Already sent — wait a few seconds" });
+    return json(res, 429, { ok: false, error: "Sent moments ago" });
   }
 
   const time = torontoTime();

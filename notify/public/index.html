@@ -81,10 +81,12 @@
       font-family: inherit;
       text-align: left;
       color: var(--ink);
+      /* name on the left, status on the right, both vertically centred */
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 5px;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
@@ -116,17 +118,17 @@
         0 8px 20px rgba(0,0,0,0.45);
     }
 
-    /* specular highlight sweeping across the metal */
+    /* specular glint, kept in the gap between the name and the status */
     .plate::after {
       content: "";
       position: absolute;
       inset: 0;
       pointer-events: none;
       background: linear-gradient(100deg,
-        transparent 56%,
-        rgba(255,255,255,0.26) 67%,
-        rgba(255,255,255,0.05) 71%,
-        transparent 77%);
+        transparent 38%,
+        rgba(255,255,255,0.26) 47%,
+        rgba(255,255,255,0.05) 51%,
+        transparent 57%);
     }
 
     .plate > * { position: relative; z-index: 1; }
@@ -136,7 +138,9 @@
     .plate:focus-visible { outline: 3px solid var(--gold-light); outline-offset: 3px; }
     .plate:disabled { cursor: wait; filter: saturate(0.55) brightness(0.86); transform: none; }
 
-    .plate .who {
+    .who {
+      flex: 1 1 auto;
+      min-width: 0;
       font-size: 26px;
       font-weight: 600;
       letter-spacing: 0.02em;
@@ -144,28 +148,55 @@
       text-shadow: var(--ink-shadow);
     }
 
-    .plate .cap {
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-      opacity: 0.86;
+    /* right-hand status column */
+    .cap {
+      flex: 0 1 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+      text-align: right;
       text-shadow: var(--ink-shadow);
     }
 
+    .cap-main {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      white-space: nowrap;
+    }
+
+    .cap-time {
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      opacity: 0.78;
+      white-space: nowrap;
+    }
+
+    /* once notified, the status is the point of the plate — make it read loud */
+    .plate.sent .cap-main { opacity: 1; font-size: 15px; letter-spacing: 0.06em; }
+    .plate.sent .cap-time { opacity: 0.92; }
+    .plate.failed .cap-main { opacity: 1; }
+    .plate.failed .cap-time { white-space: normal; max-width: 160px; }
+
     .plate.sent {
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.55),
-        inset 0 -2px 7px rgba(0,0,0,0.32),
+        inset 0 1px 0 rgba(255,255,255,0.70),
+        inset 0 -1px 0 rgba(255,255,255,0.22),
+        inset 0 -3px 9px rgba(0,0,0,0.34),
         0 0 0 3px var(--alert-green),
-        0 8px 20px rgba(0,0,0,0.42);
+        0 8px 20px rgba(0,0,0,0.45);
     }
     .plate.failed {
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.55),
-        inset 0 -2px 7px rgba(0,0,0,0.32),
+        inset 0 1px 0 rgba(255,255,255,0.70),
+        inset 0 -1px 0 rgba(255,255,255,0.22),
+        inset 0 -3px 9px rgba(0,0,0,0.34),
         0 0 0 3px var(--alert-red),
-        0 8px 20px rgba(0,0,0,0.42);
+        0 8px 20px rgba(0,0,0,0.45);
     }
 
     /* per-doctor metal colours — ink chosen for contrast on each */
@@ -184,6 +215,16 @@
     .didonato {
       --m-light: #A6E5BC; --m-base: #257A42; --m-dark: #0E3F22;
       --edge: #97DCAF; --ink: #FFFFFF; --ink-shadow: 0 1px 3px rgba(0,0,0,0.55);
+    }
+
+    /* narrow phones: shrink the name so the status always fits beside it */
+    @media (max-width: 379px) {
+      .plate { padding: 16px 16px; }
+      .who { font-size: 21px; }
+      .cap-main { font-size: 12px; letter-spacing: 0.08em; }
+      .plate.sent .cap-main { font-size: 13px; }
+      .cap-time { font-size: 11px; }
+      .plate.failed .cap-time { max-width: 130px; }
     }
 
     /* ── PIN gate ── */
@@ -290,19 +331,33 @@
 
         const cap = document.createElement("span");
         cap.className = "cap";
-        cap.textContent = "Tap to notify";
+        const capMain = document.createElement("span");
+        capMain.className = "cap-main";
+        const capTime = document.createElement("span");
+        capTime.className = "cap-time";
+        cap.append(capMain, capTime);
+
+        // the status is announced on its own so a screen reader hears the result
+        cap.setAttribute("role", "status");
+        cap.setAttribute("aria-live", "polite");
 
         btn.append(who, cap);
-        btn.addEventListener("click", () => notify(doc, btn, cap));
+        btn.status = (main, time) => {
+          capMain.textContent = main;
+          capTime.textContent = time || "";
+          capTime.hidden = !time;
+        };
+        btn.status("Tap to notify", "");
+        btn.addEventListener("click", () => notify(doc, btn));
         panel.appendChild(btn);
       });
     }
 
-    async function notify(doc, btn, cap) {
+    async function notify(doc, btn) {
       clearTimeout(btn.resetTimer);
       btn.disabled = true;
       btn.classList.remove("sent", "failed");
-      cap.textContent = "Sending…";
+      btn.status("Sending…", "");
       try {
         const r = await fetch("/api/notify", {
           method: "POST",
@@ -317,16 +372,16 @@
         }
         if (!r.ok) throw new Error(data.error || "Error " + r.status);
         btn.classList.add("sent");
-        cap.textContent = "✓ Notified · " + data.time;
+        btn.status("✓ Notified", data.time || "");
         if (navigator.vibrate) navigator.vibrate(80);
       } catch (err) {
         btn.classList.add("failed");
-        cap.textContent = err.message || "Could not send";
+        btn.status("✕ Not sent", err.message || "Could not send");
       } finally {
         btn.disabled = false;
         btn.resetTimer = setTimeout(() => {
           btn.classList.remove("sent", "failed");
-          cap.textContent = "Tap to notify";
+          btn.status("Tap to notify", "");
         }, 8000);
       }
     }
