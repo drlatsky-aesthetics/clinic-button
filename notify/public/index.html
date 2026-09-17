@@ -8,7 +8,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Treasury Medical — Notify Dr. Latsky</title>
+  <title>Treasury Medical — Notify a Physician</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
@@ -29,14 +29,12 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     [hidden] { display: none !important; }
 
-    html, body { height: 100%; }
-
     body {
       font-family: 'Jost', sans-serif;
       background: var(--charcoal);
       color: var(--ivory);
       min-height: 100vh;
-      padding: 32px 16px 40px;
+      padding: 28px 16px 32px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -45,7 +43,7 @@
     h1 {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 500;
-      font-size: 30px;
+      font-size: 29px;
       color: var(--gold-light);
       letter-spacing: 0.04em;
       text-align: center;
@@ -61,79 +59,132 @@
     }
 
     main {
-      flex: 1;
       width: 100%;
-      max-width: 420px;
+      max-width: 460px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 22px;
-      padding: 24px 0;
+      gap: 14px;
+      padding: 26px 0 18px;
     }
 
-    /* ── the one button ── */
-    #call {
-      width: min(78vw, 300px);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      border: 2px solid var(--gold);
-      background:
-        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.10), transparent 55%),
-        linear-gradient(160deg, var(--gold) 0%, var(--gold-dim) 100%);
-      color: var(--charcoal);
-      font-family: inherit;
-      font-weight: 600;
-      font-size: 22px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      line-height: 1.25;
+    /* ── metallic doctor plates ── */
+    .plate {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      width: 100%;
+      min-height: 96px;
+      padding: 18px 22px;
+      border-radius: 16px;
+      border: 1px solid var(--edge);
       cursor: pointer;
+      font-family: inherit;
+      text-align: left;
+      color: var(--ink);
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
-      gap: 8px;
-      box-shadow:
-        0 0 0 10px rgba(201, 168, 76, 0.10),
-        0 0 0 22px rgba(201, 168, 76, 0.05),
-        0 18px 40px rgba(0, 0, 0, 0.45);
-      transition: transform 0.1s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      gap: 5px;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
       touch-action: manipulation;
+      transition: transform 0.09s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      /* fine brushed grain + polished horizon bands + the colour itself */
+      background:
+        repeating-linear-gradient(90deg,
+          rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px,
+          rgba(0,0,0,0.05) 1px, rgba(0,0,0,0.05) 2px),
+        linear-gradient(180deg,
+          rgba(255,255,255,0.68) 0%,
+          rgba(255,255,255,0.20) 12%,
+          rgba(255,255,255,0.00) 30%,
+          rgba(0,0,0,0.00) 45%,
+          rgba(0,0,0,0.30) 50%,
+          rgba(0,0,0,0.08) 57%,
+          rgba(255,255,255,0.10) 86%,
+          rgba(255,255,255,0.32) 100%),
+        linear-gradient(180deg,
+          var(--m-light) 0%,
+          var(--m-base) 38%,
+          var(--m-dark) 62%,
+          var(--m-base) 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.70),
+        inset 0 -1px 0 rgba(255,255,255,0.22),
+        inset 0 -3px 9px rgba(0,0,0,0.34),
+        0 8px 20px rgba(0,0,0,0.45);
     }
-    #call .icon { font-size: 44px; line-height: 1; }
-    #call small {
+
+    /* specular highlight sweeping across the metal */
+    .plate::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(100deg,
+        transparent 56%,
+        rgba(255,255,255,0.26) 67%,
+        rgba(255,255,255,0.05) 71%,
+        transparent 77%);
+    }
+
+    .plate > * { position: relative; z-index: 1; }
+
+    .plate:hover { filter: brightness(1.06); }
+    .plate:active { transform: scale(0.985); box-shadow: inset 0 2px 8px rgba(0,0,0,0.42), 0 3px 10px rgba(0,0,0,0.35); }
+    .plate:focus-visible { outline: 3px solid var(--gold-light); outline-offset: 3px; }
+    .plate:disabled { cursor: wait; filter: saturate(0.55) brightness(0.86); transform: none; }
+
+    .plate .who {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      line-height: 1.15;
+      text-shadow: var(--ink-shadow);
+    }
+
+    .plate .cap {
       font-size: 12px;
       font-weight: 500;
-      letter-spacing: 0.14em;
-      opacity: 0.8;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      opacity: 0.86;
+      text-shadow: var(--ink-shadow);
     }
-    #call:hover { filter: brightness(1.05); }
-    #call:active { transform: scale(0.96); }
-    #call:disabled { filter: saturate(0.4) brightness(0.8); cursor: wait; transform: none; }
 
-    #call.sent {
-      background: linear-gradient(160deg, var(--alert-green), #3e8a58);
-      border-color: var(--alert-green);
-      color: var(--ivory);
+    .plate.sent {
       box-shadow:
-        0 0 0 10px rgba(92, 184, 122, 0.14),
-        0 0 0 22px rgba(92, 184, 122, 0.06),
-        0 18px 40px rgba(0, 0, 0, 0.45);
+        inset 0 1px 0 rgba(255,255,255,0.55),
+        inset 0 -2px 7px rgba(0,0,0,0.32),
+        0 0 0 3px var(--alert-green),
+        0 8px 20px rgba(0,0,0,0.42);
+    }
+    .plate.failed {
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.55),
+        inset 0 -2px 7px rgba(0,0,0,0.32),
+        0 0 0 3px var(--alert-red),
+        0 8px 20px rgba(0,0,0,0.42);
     }
 
-    #status {
-      min-height: 22px;
-      font-size: 15px;
-      text-align: center;
-      color: var(--text-dim);
-      transition: color 0.2s ease;
+    /* per-doctor metal colours — ink chosen for contrast on each */
+    .latsky {
+      --m-light: #FFD9E8; --m-base: #E0709F; --m-dark: #93315C;
+      --edge: #FFC2DA; --ink: #1C1C1E; --ink-shadow: 0 1px 0 rgba(255,255,255,0.40);
     }
-    #status.ok { color: var(--alert-green); }
-    #status.err { color: var(--alert-red); }
+    .tom {
+      --m-light: #FF9C90; --m-base: #C4322A; --m-dark: #6E1710;
+      --edge: #FF8F82; --ink: #FFFFFF; --ink-shadow: 0 1px 3px rgba(0,0,0,0.55);
+    }
+    .baker {
+      --m-light: #A9CEFF; --m-base: #2F63BF; --m-dark: #12305E;
+      --edge: #9CC4FA; --ink: #FFFFFF; --ink-shadow: 0 1px 3px rgba(0,0,0,0.55);
+    }
+    .didonato {
+      --m-light: #A6E5BC; --m-base: #257A42; --m-dark: #0E3F22;
+      --edge: #97DCAF; --ink: #FFFFFF; --ink-shadow: 0 1px 3px rgba(0,0,0,0.55);
+    }
 
     /* ── PIN gate ── */
     #gate {
@@ -143,6 +194,7 @@
       border: 1px solid var(--charcoal-light);
       border-radius: var(--radius);
       padding: 28px 24px;
+      margin: 40px 0;
       display: flex;
       flex-direction: column;
       gap: 14px;
@@ -179,6 +231,7 @@
       color: var(--text-dim);
       text-align: center;
       line-height: 1.7;
+      margin-top: 6px;
     }
     .footer a { color: var(--text-dim); }
   </style>
@@ -186,83 +239,97 @@
 <body>
   <header>
     <h1>Treasury Medical</h1>
-    <div class="sub">Notify Dr. Latsky</div>
+    <div class="sub">Notify a Physician</div>
   </header>
 
-  <main>
-    <form id="gate" hidden autocomplete="off">
-      <label for="pin">Enter the staff PIN once on this device</label>
-      <input id="pin" type="password" inputmode="numeric" placeholder="••••" required />
-      <button type="submit">Unlock</button>
-    </form>
+  <form id="gate" hidden autocomplete="off">
+    <label for="pin">Enter the staff PIN once on this device</label>
+    <input id="pin" type="password" inputmode="numeric" placeholder="••••" required />
+    <button type="submit">Unlock</button>
+  </form>
 
-    <button id="call" hidden type="button" aria-label="Notify Dr. Latsky">
-      <span class="icon">🔔</span>
-      <span>Notify<br />Dr. Latsky</span>
-      <small>Tap once</small>
-    </button>
-    <div id="status" role="status" aria-live="polite"></div>
-  </main>
+  <main id="panel" hidden></main>
 
   <div class="footer">
-    Sends a "you're needed" alert to Dr. Latsky's phone.<br />
+    Only the doctor you tap is notified.<br />
     No patient details are ever sent.<br />
     <a href="#" id="forget">Forget PIN on this device</a>
   </div>
 
   <script>
+    const DOCTORS = [
+      { key: "latsky",   name: "Dr. Latsky" },
+      { key: "tom",      name: "Dr. Tom" },
+      { key: "baker",    name: "Dr. Baker" },
+      { key: "didonato", name: "Dr. Di Donato" },
+    ];
+
     const PIN_KEY = "clinic_staff_pin";
     const gate = document.getElementById("gate");
-    const call = document.getElementById("call");
-    const status = document.getElementById("status");
-    let resetTimer;
+    const panel = document.getElementById("panel");
 
     const getPin = () => { try { return localStorage.getItem(PIN_KEY) || ""; } catch { return ""; } };
     const setPin = (v) => { try { v ? localStorage.setItem(PIN_KEY, v) : localStorage.removeItem(PIN_KEY); } catch {} };
 
-    function setStatus(msg, kind) {
-      status.textContent = msg;
-      status.className = kind || "";
-    }
-
     function render() {
       const unlocked = Boolean(getPin());
       gate.hidden = unlocked;
-      call.hidden = !unlocked;
-      setStatus("");
-      if (!unlocked) document.getElementById("pin").focus();
+      panel.hidden = !unlocked;
+      if (!unlocked) { document.getElementById("pin").focus(); return; }
+
+      panel.innerHTML = "";
+      DOCTORS.forEach((doc) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "plate " + doc.key;
+        btn.setAttribute("aria-label", "Notify " + doc.name);
+
+        const who = document.createElement("span");
+        who.className = "who";
+        who.textContent = doc.name;
+
+        const cap = document.createElement("span");
+        cap.className = "cap";
+        cap.textContent = "Tap to notify";
+
+        btn.append(who, cap);
+        btn.addEventListener("click", () => notify(doc, btn, cap));
+        panel.appendChild(btn);
+      });
     }
 
-    async function notify() {
-      clearTimeout(resetTimer);
-      call.disabled = true;
-      setStatus("Sending…");
+    async function notify(doc, btn, cap) {
+      clearTimeout(btn.resetTimer);
+      btn.disabled = true;
+      btn.classList.remove("sent", "failed");
+      cap.textContent = "Sending…";
       try {
         const r = await fetch("/api/notify", {
           method: "POST",
           headers: { "Content-Type": "application/json", "X-Staff-PIN": getPin() },
-          body: JSON.stringify({}),
+          body: JSON.stringify({ doctor: doc.key }),
         });
         const data = await r.json().catch(() => ({}));
         if (r.status === 401) {
           setPin("");
           render();
-          setStatus("PIN rejected — please enter it again", "err");
           return;
         }
-        if (!r.ok) throw new Error(data.error || `Error ${r.status}`);
-        call.classList.add("sent");
-        setStatus(`Sent — Dr. Latsky has been notified (${data.time})`, "ok");
+        if (!r.ok) throw new Error(data.error || "Error " + r.status);
+        btn.classList.add("sent");
+        cap.textContent = "✓ Notified · " + data.time;
         if (navigator.vibrate) navigator.vibrate(80);
-        resetTimer = setTimeout(() => { call.classList.remove("sent"); setStatus(""); }, 6000);
       } catch (err) {
-        setStatus(err.message || "Could not send", "err");
+        btn.classList.add("failed");
+        cap.textContent = err.message || "Could not send";
       } finally {
-        call.disabled = false;
+        btn.disabled = false;
+        btn.resetTimer = setTimeout(() => {
+          btn.classList.remove("sent", "failed");
+          cap.textContent = "Tap to notify";
+        }, 8000);
       }
     }
-
-    call.addEventListener("click", notify);
 
     gate.addEventListener("submit", (e) => {
       e.preventDefault();
