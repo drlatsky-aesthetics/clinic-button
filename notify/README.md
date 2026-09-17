@@ -130,14 +130,24 @@ ntfy.sh account, reserve them, and set `NTFY_TOKEN`.
 
 ---
 
-## API
-
 `POST /api/notify` with header `X-Staff-PIN: <pin>` and a JSON body naming the
 doctor:
 
 ```json
 { "doctor": "latsky" }
 ```
+
+### What staff see when they tap
+
+The plate sinks into the panel and stays down: dimmed sheen, inner shadow,
+name and status pushed in. It holds that pressed look while the request is in
+flight, then through the result — a green outline and "✓ Notified" with the
+time, or a red outline and "✕ Not sent" with the reason. A bar along the bottom
+edge drains over the 8 seconds the plate stays pressed, so the wait is visible
+rather than guessed at. When it empties, the plate lifts back out and returns
+to "Tap to notify".
+
+## API
 
 `doctor` is one of `latsky`, `tom`, `baker`, `didonato`, and defaults to
 `latsky` when omitted. Returns `{ ok: true, doctor, time }`. Repeat presses for
